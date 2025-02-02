@@ -1,40 +1,50 @@
-import React, { useState } from "react";
-import Question from "./Question";
-import quiz from "../data/quiz";
+import React, { useState } from 'react';
+import Question from './Question';
 
 function App() {
-  const [questions, setQuestions] = useState(quiz);
-  const [currentQuestionId, setCurrentQuestion] = useState(1);
-  const [score, setScore] = useState(0);
-  const currentQuestion = questions.find((q) => q.id === currentQuestionId);
+  const [questions] = useState([
+    {
+      id: 1,
+      prompt: 'What is your favorite color?',
+      answers: ['Red', 'Blue', 'Green', 'Yellow'],
+      correctIndex: 0,
+    },
+    {
+      id: 2,
+      prompt: 'What is the capital of France?',
+      answers: ['Paris', 'London', 'Berlin', 'Madrid'],
+      correctIndex: 0,
+    },
+    // Add more questions as needed
+  ]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  function handleQuestionAnswered(correct) {
-    if (currentQuestionId < questions.length) {
-      setCurrentQuestion((currentQuestionId) => currentQuestionId + 1);
+  // Handle when the user answers (or time runs out)
+  const handleAnswer = (isCorrect) => {
+    if (isCorrect) {
+      console.log('Correct!');
     } else {
-      setCurrentQuestion(null);
+      console.log('Incorrect or time ran out!');
     }
-    if (correct) {
-      setScore((score) => score + 1);
-    }
+
+    // Move to the next question
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+  };
+
+  // Reset to the first question if we've gone through all questions
+  if (currentQuestionIndex >= questions.length) {
+    return <div>No more questions!</div>;
   }
 
+  // Render the current question
+  const currentQuestion = questions[currentQuestionIndex];
   return (
-    <main>
-      <section>
-        {currentQuestion ? (
-          <Question
-            question={currentQuestion}
-            onAnswered={handleQuestionAnswered}
-          />
-        ) : (
-          <>
-            <h1>Game Over</h1>
-            <h2>Total Correct: {score}</h2>
-          </>
-        )}
-      </section>
-    </main>
+    <div>
+      <Question
+        question={currentQuestion}
+        onAnswered={handleAnswer}
+      />
+    </div>
   );
 }
 
